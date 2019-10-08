@@ -1,40 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ingestly O2O / For Attendees</title>
-    <meta name="viewport" content="width=device-width" />
+    <title>TD O2O / For Attendees</title>
+    <meta name="viewport" content="width=device-width"/>
 </head>
 <body>
 <div width="100%">
-    <h1>Ingestly O2O / For Attendees</h1>
+    <h1>TD O2O / For Attendees</h1>
 
     <div>
-        <button id="generate_code" style="padding: 20px;">Click here to generate your code.</button>
+        <form name="attendee">
+            <input type="text" name="eventName" value="test event"/>
+            <button id="generate_code" style="padding: 20px;">Click here to generate your code.</button>
+        </form>
     </div>
 
     <canvas id="canvas" style="width: 100%"></canvas>
 
-    <!--
-    <script src="/ingestly.js"></script>
-    <script src="/page_code.js"></script>
-    -->
-    <script src="/ingestly_dummy.js"></script>
+    <!-- Standard TD-JS-SDK implementation -->
+    <!-- Treasure Data -->
+    <script type="text/javascript">
+        !function (t, e) {
+            if (void 0 === e[t]) {
+                e[t] = function () {
+                    e[t].clients.push(this), this._init = [Array.prototype.slice.call(arguments)]
+                }, e[t].clients = [];
+                for (var r = function (t) {
+                    return function () {
+                        return this["_" + t] = this["_" + t] || [], this["_" + t].push(Array.prototype.slice.call(arguments)), this
+                    }
+                }, s = ["blockEvents", "unblockEvents", "setSignedMode", "setAnonymousMode", "resetUUID", "addRecord", "fetchGlobalID", "set", "trackEvent", "trackPageview", "trackClicks", "ready"], n = 0; n < s.length; n++) {
+                    var c = s[n];
+                    e[t].prototype[c] = r(c)
+                }
+                var o = document.createElement("script");
+                o.type = "text/javascript", o.async = !0, o.src = ("https:" === document.location.protocol ? "https:" : "http:") + "//cdn.treasuredata.com/sdk/2.1/td.min.js";
+                var a = document.getElementsByTagName("script")[0];
+                a.parentNode.insertBefore(o, a)
+            }
+        }("Treasure", this);</script>
+
+    <script type="text/javascript">
+        // Configure an instance for your database
+        var td = new Treasure({
+            host: 'in.treasuredata.com',
+            writeKey: 'your_api_write_key',
+            database: 'your_db_name'
+        });
+        // Enable cross-domain tracking
+        td.set('$global', 'td_global_id', 'td_global_id');
+        // Track pageview information to 'pageviews' table
+        td.trackPageview('weblog');
+    </script>
+
 
     <script src="/bundle.min.js"></script>
     <script>
 
         // Define the event name
-        var eventName = 'smart event';
+        var eventName = window.document.attendee.eventName.value;
 
-        document.getElementById('generate_code').addEventListener('click', function () {
+        document.getElementById('generate_code').addEventListener('click', function (ev) {
+
+            ev.preventDefault();
 
             // Generate a code and print it on HTML
-            var result = generateCode('ingestly', eventName, document.getElementById('canvas'));
+            var result = generateCode('_td', eventName, document.getElementById('canvas'));
 
-            // Send an event to Ingestly
-            Ingestly.trackAction('generate', 'o2o_code', {
-                ooName: eventName,
-                ooResult: result
+            // Send an event to TD
+            td.trackEvent('td_o2o', {
+                o2o_event_name: eventName,
+                o2o_attendee_client_id: result.clientId,
+                o2o_attendee_ssc_id: result.sscId,
+                o2o_code_generated_at: result.generatedAt
             });
 
         }, false);

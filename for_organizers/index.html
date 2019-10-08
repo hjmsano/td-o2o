@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ingestly O2O / For Organizers</title>
+    <title>TD O2O / For Organizers</title>
     <meta name="viewport" content="width=device-width" />
 </head>
 <body>
 <div width="100%">
-    <h1>Ingestly O2O / For Organizers</h1>
+    <h1>TD O2O / For Organizers</h1>
     <div id="main_form">
         <h2>Attendee (scanned)</h2>
         <form name="attendee">
@@ -16,12 +16,12 @@
                     <td width="70%"><input type="text" name="evName" id="evName" readonly/></td>
                 </tr>
                 <tr>
-                    <th><label for="lsId">LocalStorage ID</label></th>
-                    <td><input type="text" name="lsId" id="lsId" readonly/></td>
+                    <th><label for="clientId">Client ID</label></th>
+                    <td><input type="text" name="clientId" id="clientId" readonly/></td>
                 </tr>
                 <tr>
-                    <th><label for="ckId">Cookie ID</label></th>
-                    <td><input type="text" name="ckId" id="ckId" readonly/></td>
+                    <th><label for="sscId">SSC ID</label></th>
+                    <td><input type="text" name="sscId" id="sscId" readonly/></td>
                 </tr>
                 <tr>
                     <th><label for="generatedAt">Generated At</label></th>
@@ -39,7 +39,7 @@
                 </tr>
                 <tr>
                     <th><label for="eventName">Event Names</label></th>
-                    <td><input type="text" name="eventName" id="eventName"/></td>
+                    <td><input type="text" name="eventName" id="eventName" value="test event" /></td>
                 </tr>
                 <tr>
                     <th><label for="authKey">Auth Key</label></th>
@@ -55,11 +55,24 @@
         </form>
     </div>
 
-    <!--
-    <script src="/ingestly.js"></script>
-    <script src="/page_code.js"></script>
-    -->
-    <script src="/ingestly_dummy.js"></script>
+    <!-- Standard TD-JS-SDK implementation -->
+    <!-- Treasure Data -->
+    <script type="text/javascript">
+        !function(t,e){if(void 0===e[t]){e[t]=function(){e[t].clients.push(this),this._init=[Array.prototype.slice.call(arguments)]},e[t].clients=[];for(var r=function(t){return function(){return this["_"+t]=this["_"+t]||[],this["_"+t].push(Array.prototype.slice.call(arguments)),this}},s=["blockEvents","unblockEvents","setSignedMode","setAnonymousMode","resetUUID","addRecord","fetchGlobalID","set","trackEvent","trackPageview","trackClicks","ready"],n=0;n<s.length;n++){var c=s[n];e[t].prototype[c]=r(c)}var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=("https:"===document.location.protocol?"https:":"http:")+"//cdn.treasuredata.com/sdk/2.1/td.min.js";var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)}}("Treasure",this);</script>
+
+    <script type="text/javascript">
+        // Configure an instance for your database
+        var td = new Treasure({
+            host: 'in.treasuredata.com',
+            writeKey: 'your_api_write_key',
+            database: 'your_db_name'
+        });
+        // Enable cross-domain tracking
+        td.set('$global', 'td_global_id', 'td_global_id');
+        // Track pageview information to 'pageviews' table
+        td.trackPageview('weblog');
+    </script>
+
 
     <script src="/bundle.min.js"></script>
     <script>
@@ -67,20 +80,19 @@
 
         // Parse URL parameters
         var parsedUrl = parseUrl(window.location.href);
-        console.log(parsedUrl);
         var attendeeInfo = {
             evName: decodeURIComponent(parsedUrl['Query']['evName']),
-            lsId: decodeURIComponent(parsedUrl['Query']['lsId']),
-            ckId: decodeURIComponent(parsedUrl['Query']['ckId']),
+            clientId: decodeURIComponent(parsedUrl['Query']['clientId']),
+            sscId: decodeURIComponent(parsedUrl['Query']['sscId']),
             generatedAt: decodeURIComponent(parsedUrl['Query']['generatedAt'])
         };
         document.forms.attendee.evName.value = attendeeInfo['evName'];
-        document.forms.attendee.lsId.value = attendeeInfo['lsId'];
-        document.forms.attendee.ckId.value = attendeeInfo['ckId'];
+        document.forms.attendee.clientId.value = attendeeInfo['clientId'];
+        document.forms.attendee.sscId.value = attendeeInfo['sscId'];
         document.forms.attendee.generatedAt.value = attendeeInfo['generatedAt'];
 
         // Restore the scanner info
-        scannerInfo = JSON.parse(localStorage.getItem('ingestly-o2o-scanner'));
+        scannerInfo = JSON.parse(localStorage.getItem('td-o2o-scanner'));
         document.forms.organizer.scannerName.value = scannerInfo && scannerInfo['scannerName'] ? scannerInfo['scannerName'] : '';
         document.forms.organizer.eventName.value = scannerInfo && scannerInfo['eventName'] ? scannerInfo['eventName'] : '';
         document.forms.organizer.authKey.value = scannerInfo && scannerInfo['authKey'] ? scannerInfo['authKey'] : '';
@@ -95,23 +107,21 @@
                 eventName: document.forms.organizer.eventName.value,
                 authKey: document.forms.organizer.authKey.value
             };
-            localStorage.setItem('ingestly-o2o-scanner', JSON.stringify(scannerInfo));
+            localStorage.setItem('td-o2o-scanner', JSON.stringify(scannerInfo));
 
             // Verify the event name
             if (attendeeInfo['evName'] !== scannerInfo['eventName']) {
                 alert('the event name does not match.');
             }
 
-            // Record the attendee's information to Ingestly
-            Ingestly.trackAction('log', 'o2o_code', {
-                ooName: scannerInfo['eventName'],
-                ooScanner: scannerInfo['scannerName'],
-                ooKey: scannerInfo['authKey'],
-                ooResult: {
-                    generatedAt: attendeeInfo['generatedAt'],
-                    lsId: attendeeInfo['lsId'],
-                    ckId: attendeeInfo['ckId']
-                }
+            // Record the attendee's information to TD
+            td.trackEvent('td_o2o', {
+                o2o_event_name: scannerInfo['eventName'],
+                o2o_scanner: scannerInfo['scannerName'],
+                o2o_scanner_key: scannerInfo['authKey'],
+                o2o_attendee_client_id: attendeeInfo['clientId'],
+                o2o_attendee_ssc_id: attendeeInfo['sscId'],
+                o2o_code_generated_at: attendeeInfo['generatedAt'],
             });
 
             // Deactivate the form

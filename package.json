@@ -1,5 +1,5 @@
 {
-  "name": "ingestly-o2o",
+  "name": "td-o2o",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ingestly/ingestly-o2o.git"
+    "url": "git+https://github.com/hjmsano/td-o2o.git"
   },
-  "author": "Ingestly Project",
+  "author": "Hajime Sano",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ingestly/ingestly-o2o/issues"
+    "url": "https://github.com/hjmsano/td-o2o/issues"
   },
-  "homepage": "https://github.com/ingestly/ingestly-o2o#readme",
+  "homepage": "https://github.com/hjmsano/td-o2o#readme",
   "dependencies": {
     "qrcode": "^1.4.2"
   },

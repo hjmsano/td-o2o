@@ -10,10 +10,10 @@ const generateCode = (prefix, eventName, canvas) => {
     const
         parser = new URL(window.location.href),
         now = +new Date,
-        ls = localStorage.getItem(`${prefix}-id`) || 'not_available',
-        ck = readCookie(`${prefix}-id`) || 'not_available';
+        clientId = readCookie(`${prefix}`) || 'not_available',
+        sscId = readCookie(`${prefix}_ssc_id`) || 'not_available';
 
-    const destination = `${parser.origin}/for_organizers/?generatedAt=${now}&lsId=${encodeURIComponent(ls)}&ckId=${encodeURIComponent(ck)}&evName=${encodeURIComponent(eventName)}`;
+    const destination = `${parser.origin}/for_organizers/?generatedAt=${now}&clientId=${encodeURIComponent(clientId)}&sscId=${encodeURIComponent(sscId)}&evName=${encodeURIComponent(eventName)}`;
 
     QRCode.toCanvas(canvas, destination, (err) => {
         console.log(err);
@@ -21,8 +21,8 @@ const generateCode = (prefix, eventName, canvas) => {
 
     return {
         generatedAt: now,
-        lsId: ls,
-        ckId: ck
+        clientId: clientId,
+        sscId: sscId
     };
 };
 
