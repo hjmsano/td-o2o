@@ -1,2 +1,5 @@
-bundle.min.js
+public/bundle.min.js
+public/404.html
 .idea/
+.firebaserc
+firebase.json

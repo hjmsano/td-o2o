@@ -4,7 +4,7 @@ module.exports = {
     mode: "production",
     entry: "./index.js",
     output: {
-        path: __dirname,
+        path: path.resolve(__dirname, 'public'),
         filename: 'bundle.min.js'
     },
     module: {
