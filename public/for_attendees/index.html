@@ -45,10 +45,10 @@
         var td = new Treasure({
             host: 'in.treasuredata.com',
             writeKey: 'your_api_write_key',
-            database: 'your_db_name'
+            database: 'your_db_name',
+            startInSignedMode: true
         });
-        // Enable cross-domain tracking
-        td.set('$global', 'td_global_id', 'td_global_id');
+
         // Track pageview information to 'pageviews' table
         td.trackPageview('weblog');
     </script>
