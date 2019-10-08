@@ -1,5 +1,7 @@
 public/bundle.min.js
 public/404.html
 .idea/
+.firebase/
 .firebaserc
 firebase.json
+firebase-debug.log
